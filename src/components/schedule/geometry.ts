@@ -2,7 +2,7 @@ import type { SessionLite } from "@/lib/types"
 import { ceilToHalfHour, floorToHour, minutesBetween } from "@/lib/time"
 
 export const PX_PER_MIN = 3
-export const HEADER_PX = 40
+export const HEADER_PX = 52
 
 export interface GridGeometry {
   dayStart: Date

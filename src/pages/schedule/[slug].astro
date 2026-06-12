@@ -6,6 +6,7 @@ import { FavoriteButton } from "@/components/FavoriteButton"
 import { Badge } from "@/components/ui/badge"
 import Layout from "@/layouts/main.astro"
 import { fmtTime } from "@/lib/time"
+import { venueLabel } from "@/lib/venue"
 
 export async function getStaticPaths() {
   const sessions = await getCollection("sessions")
@@ -47,7 +48,7 @@ const { title, start, end, stage, kind, speakers } = entry.data
       </span>
       <span class="inline-flex items-center gap-1.5">
         <MapPin className="size-4" />
-        {stage}
+        {stage}{venueLabel(stage) && ` · ${venueLabel(stage)}`}
       </span>
       {kind === "workshop" && <Badge variant="secondary">Workshop</Badge>}
     </div>

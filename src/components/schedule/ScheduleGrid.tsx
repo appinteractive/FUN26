@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
 import { Badge } from "@/components/ui/badge"
+import { sessionState, useNow, type SessionState } from "@/hooks/use-now"
 import type { SessionLite } from "@/lib/types"
 import { fmtTime, minutesBetween } from "@/lib/time"
 import { cn } from "@/lib/utils"
+import { venueLabel } from "@/lib/venue"
 
 import { computeGeometry, HEADER_PX, offsetPx, PX_PER_MIN } from "./geometry"
 
@@ -15,25 +17,18 @@ interface ScheduleGridProps {
   favoritesOnly: boolean
 }
 
-function useNow(intervalMs = 30_000): Date {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), intervalMs)
-    return () => clearInterval(id)
-  }, [intervalMs])
-  return now
-}
-
 function SessionBlock({
   session,
   top,
   height,
   dimmed,
+  state,
 }: {
   session: SessionLite
   top: number
   height: number
   dimmed: boolean
+  state: SessionState | null
 }) {
   const duration = minutesBetween(session.start, session.end)
   const isBreak = session.kind === "break"
@@ -42,7 +37,8 @@ function SessionBlock({
     <div
       className={cn(
         "absolute inset-x-1 transition-opacity",
-        dimmed && "opacity-30"
+        state === "past" && "opacity-45",
+        dimmed && "opacity-25"
       )}
       style={{ top: top + 2, height: height - 4 }}
     >
@@ -52,7 +48,8 @@ function SessionBlock({
           "flex h-full flex-col gap-0.5 overflow-hidden rounded-lg border p-2 no-underline",
           isBreak
             ? "items-center justify-center border-dashed bg-muted/50 text-muted-foreground"
-            : "bg-card shadow-xs transition-shadow hover:shadow-md"
+            : "bg-card transition-colors hover:border-primary/60",
+          state === "live" && !isBreak && "border-primary bg-primary/5"
         )}
       >
         {isBreak ? (
@@ -61,8 +58,14 @@ function SessionBlock({
           </span>
         ) : (
           <>
-            <div className="flex items-center gap-1 text-xs font-semibold text-primary">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
               {fmtTime(session.start)}
+              {state === "live" && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary px-1.5 text-[0.6rem] font-bold tracking-wide text-primary-foreground uppercase">
+                  <span className="size-1.5 animate-pulse rounded-full bg-primary-foreground" />
+                  Now
+                </span>
+              )}
               {session.kind === "workshop" && (
                 <Badge variant="secondary" className="mr-6 ml-auto">
                   Workshop
@@ -106,17 +109,22 @@ export function ScheduleGrid({
   const now = useNow()
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const nowMinutes = minutesBetween(geometry.dayStart, now)
-  const nowVisible = nowMinutes >= 0 && nowMinutes <= geometry.totalMinutes
-  const nowTop = HEADER_PX + nowMinutes * PX_PER_MIN
+  const nowMinutes = now ? minutesBetween(geometry.dayStart, now) : null
+  const nowVisible =
+    nowMinutes !== null &&
+    nowMinutes >= 0 &&
+    nowMinutes <= geometry.totalMinutes
+  const nowTop =
+    nowMinutes !== null ? HEADER_PX + nowMinutes * PX_PER_MIN : null
 
+  const scrolledToNow = useRef(false)
   useEffect(() => {
-    if (nowVisible && scrollRef.current) {
-      scrollRef.current.scrollTop = Math.max(0, nowTop - 140)
+    // Jump to "now" once it's known, then leave scrolling to the user.
+    if (!scrolledToNow.current && nowVisible && nowTop !== null) {
+      scrolledToNow.current = true
+      scrollRef.current?.scrollTo({ top: Math.max(0, nowTop - 140) })
     }
-    // Only on mount: jump to "now" once, then leave scrolling to the user.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [nowVisible, nowTop])
 
   return (
     <div
@@ -138,10 +146,17 @@ export function ScheduleGrid({
           {stages.map((stage) => (
             <div
               key={stage}
-              className="sticky top-0 z-20 flex items-center justify-center border-b bg-background px-2 text-xs font-semibold tracking-wide uppercase"
+              className="sticky top-0 z-20 flex flex-col items-center justify-center gap-0.5 border-b bg-background px-2"
               style={{ height: HEADER_PX }}
             >
-              <span className="truncate">{stage}</span>
+              <span className="max-w-full truncate text-xs font-semibold tracking-wide uppercase">
+                {stage}
+              </span>
+              {venueLabel(stage) && (
+                <span className="max-w-full truncate text-[0.65rem] text-muted-foreground">
+                  {venueLabel(stage)}
+                </span>
+              )}
             </div>
           ))}
 
@@ -191,17 +206,18 @@ export function ScheduleGrid({
                       minutesBetween(session.start, session.end) * PX_PER_MIN
                     }
                     dimmed={favoritesOnly && !favorites.includes(session.slug)}
+                    state={sessionState(session.start, session.end, now)}
                   />
                 ))}
             </div>
           ))}
         </div>
 
-        {nowVisible && (
+        {nowVisible && now && (
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 z-20"
-            style={{ top: nowTop }}
+            style={{ top: nowTop ?? 0 }}
           >
             <div className="border-t-2 border-red-500/80" />
             <span className="absolute -top-2 left-[3.25rem] rounded bg-red-500 px-1 text-[0.6rem] font-semibold text-white tabular-nums">

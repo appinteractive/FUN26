@@ -9,9 +9,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { sessionState, useNow } from "@/hooks/use-now"
 import type { SessionLite } from "@/lib/types"
 import { fmtTime } from "@/lib/time"
 import { cn } from "@/lib/utils"
+import { venueLabel } from "@/lib/venue"
 
 interface ScheduleListProps {
   sessions: SessionLite[]
@@ -24,6 +26,7 @@ export function ScheduleList({
   favorites,
   favoritesOnly,
 }: ScheduleListProps) {
+  const now = useNow()
   const visible = favoritesOnly
     ? sessions.filter((s) => favorites.includes(s.slug))
     : sessions
@@ -59,17 +62,20 @@ export function ScheduleList({
           </h2>
           {group.map((session) => {
             const isBreak = session.kind === "break"
-            const ended = new Date(session.end).getTime() < Date.now()
+            const state = sessionState(session.start, session.end, now)
             return (
               <div key={session.slug} className="relative">
                 <a
                   href={`/schedule/${session.slug}`}
                   className={cn(
-                    "flex items-start gap-3 rounded-xl border p-3 no-underline transition-shadow",
+                    "flex items-start gap-3 rounded-xl border p-3 no-underline transition-colors",
                     isBreak
                       ? "border-dashed bg-muted/50"
-                      : "bg-card shadow-xs hover:shadow-md",
-                    ended && "opacity-60"
+                      : "bg-card hover:border-primary/60",
+                    state === "live" &&
+                      !isBreak &&
+                      "border-primary bg-primary/5",
+                    state === "past" && "opacity-50"
                   )}
                 >
                   <span className="w-21 shrink-0 pt-0.5 text-xs font-semibold text-primary tabular-nums">
@@ -90,7 +96,20 @@ export function ScheduleList({
                       </span>
                     )}
                     <span className="flex flex-wrap items-center gap-1.5">
-                      <Badge variant="outline">{session.stage}</Badge>
+                      {state === "live" && (
+                        <Badge className="gap-1">
+                          <span className="size-1.5 animate-pulse rounded-full bg-primary-foreground" />
+                          Now
+                        </Badge>
+                      )}
+                      <Badge variant="outline">
+                        {session.stage}
+                        {venueLabel(session.stage) && (
+                          <span className="text-muted-foreground">
+                            · {venueLabel(session.stage)}
+                          </span>
+                        )}
+                      </Badge>
                       {session.kind === "workshop" && (
                         <Badge variant="secondary">Workshop</Badge>
                       )}

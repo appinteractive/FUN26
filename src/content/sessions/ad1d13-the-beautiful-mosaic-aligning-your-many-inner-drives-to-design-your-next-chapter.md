@@ -17,11 +17,9 @@ In this hands-on session, you’ll stop forcing motivation and start working wit
 
 Using the Beautiful Mosaic method (drawn from Internal Family Systems and 20 years of facilitation) you will:
 
-• Map three plausible future lives, not just the “responsible” one
-
-• Identify what each inner drive is actually trying to protect (it’s rarely what you think)
-
-• Design a 4-week experiment that tests a direction instead of forcing a decision.
+- Map three plausible future lives, not just the “responsible” one
+- Identify what each inner drive is actually trying to protect (it’s rarely what you think)
+- Design a 4-week experiment that tests a direction instead of forcing a decision.
 
 Fair warning: I'm am not the "everything is already great" kind of person.
 

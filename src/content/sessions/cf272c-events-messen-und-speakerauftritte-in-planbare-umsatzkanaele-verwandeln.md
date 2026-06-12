@@ -21,13 +21,10 @@ In diesem Vortrag zeige ich dir, wie du Events strategisch nutzt, um daraus eine
 
 Du lernst:
 
-• Wie du als Teilnehmer gezielt Kontakte in zahlende Kunden verwandelst
-
-• Wann sich ein Messeauftritt wirklich lohnt und wie du daraus täglich über 100 qualifizierte Leads generierst
-
-• Wie du Speaker wirst und dich als gefragter Experte positionierst, der aktiv angefragt wird
-
-• Ab welchem Punkt sich eigene Events lohnen und wie du damit Marktführerschaft und Differenzierung von anderen aufbaust
+- Wie du als Teilnehmer gezielt Kontakte in zahlende Kunden verwandelst
+- Wann sich ein Messeauftritt wirklich lohnt und wie du daraus täglich über 100 qualifizierte Leads generierst
+- Wie du Speaker wirst und dich als gefragter Experte positionierst, der aktiv angefragt wird
+- Ab welchem Punkt sich eigene Events lohnen und wie du damit Marktführerschaft und Differenzierung von anderen aufbaust
 
 Das Ziel ist klar:
 

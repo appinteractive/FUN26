@@ -4,6 +4,7 @@ import "@/styles/global.css"
 import { pwaInfo } from "virtual:pwa-info"
 
 import { ReminderManager } from "@/components/ReminderManager"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { getSessionsLite } from "@/lib/sessions"
 import { DAY_LABEL } from "@/lib/types"
 
@@ -29,6 +30,19 @@ const sessions = await getSessionsLite()
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>{title}</title>
     {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+    <script is:inline>
+      ;(() => {
+        try {
+          const stored = localStorage.getItem("fun26.theme")
+          const dark = stored
+            ? stored === "dark"
+            : matchMedia("(prefers-color-scheme: dark)").matches
+          document.documentElement.classList.toggle("dark", dark)
+        } catch {
+          /* default to light */
+        }
+      })()
+    </script>
     <script>
       import { registerSW } from "virtual:pwa-register"
       registerSW({ immediate: true })
@@ -52,6 +66,7 @@ const sessions = await getSessionsLite()
           >
             {DAY_LABEL}
           </span>
+          <ThemeToggle client:load />
         </div>
       </header>
       <main class={fullHeight ? "min-h-0 flex-1" : undefined}>
