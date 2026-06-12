@@ -1,15 +1,63 @@
 ---
 import "@/styles/global.css"
+
+import { pwaInfo } from "virtual:pwa-info"
+
+import { ReminderManager } from "@/components/ReminderManager"
+import { getSessionsLite } from "@/lib/sessions"
+import { DAY_LABEL } from "@/lib/types"
+
+interface Props {
+  title?: string
+  /** Use a non-scrolling viewport shell (for the schedule grid). */
+  fullHeight?: boolean
+}
+
+const { title = "FUN26 – Freelance Unlocked", fullHeight = false } = Astro.props
+const sessions = await getSessionsLite()
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#E9664C" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Astro App</title>
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>{title}</title>
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+    <script>
+      import { registerSW } from "virtual:pwa-register"
+      registerSW({ immediate: true })
+    </script>
   </head>
-  <body>
-    <slot />
+  <body class={fullHeight ? "h-dvh overflow-hidden" : undefined}>
+    <div class={fullHeight ? "flex h-full flex-col" : undefined}>
+      <header class="border-b">
+        <div class="mx-auto flex h-14 w-full max-w-7xl items-center gap-3 px-4">
+          <a href="/" class="flex items-baseline gap-2 no-underline">
+            <span class="text-lg font-black tracking-tight text-primary"
+              >FUN26</span
+            >
+            <span
+              class="hidden text-sm font-medium text-muted-foreground sm:inline"
+              >Freelance Unlocked</span
+            >
+          </a>
+          <span
+            class="ml-auto rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+          >
+            {DAY_LABEL}
+          </span>
+        </div>
+      </header>
+      <main class={fullHeight ? "min-h-0 flex-1" : undefined}>
+        <slot />
+      </main>
+    </div>
+    <ReminderManager client:load sessions={sessions} />
   </body>
 </html>
