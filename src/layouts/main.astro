@@ -43,7 +43,21 @@ const sessions = await getSessionsLite()
     </script>
     <script>
       import { registerSW } from "virtual:pwa-register"
-      registerSW({ immediate: true })
+      registerSW({
+        immediate: true,
+        onRegisteredSW(_url, registration) {
+          if (!registration) return
+          // Installed PWAs (iOS especially) have no reload button: recheck
+          // for a new build whenever the app returns to the foreground and
+          // every 15 minutes. autoUpdate then swaps and reloads in place —
+          // favorites and settings live in localStorage and are unaffected.
+          const check = () => registration.update().catch(() => {})
+          document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") check()
+          })
+          setInterval(check, 15 * 60_000)
+        },
+      })
     </script>
   </head>
   <body>

@@ -1,6 +1,7 @@
 import { useStore } from "@nanostores/react"
 import { Heart, LayoutGrid, List } from "lucide-react"
 
+import { ImportSchedule } from "@/components/ImportSchedule"
 import { NotificationSettings } from "@/components/NotificationSettings"
 import { useMounted } from "@/hooks/use-mounted"
 import { useNow } from "@/hooks/use-now"
@@ -38,6 +39,7 @@ export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
 
   return (
     <div className="flex flex-col">
+      {mounted && <ImportSchedule sessions={sessions} />}
       <div className="sticky top-0 z-30 -mx-3 bg-background px-3 py-2 sm:-mx-4 sm:px-4">
         <div className="flex items-center gap-2">
           <Tabs
