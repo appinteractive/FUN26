@@ -3,12 +3,14 @@ import { useEffect, useRef } from "react"
 import { FavoriteButton } from "@/components/FavoriteButton"
 import { Badge } from "@/components/ui/badge"
 import { sessionState, useNow, type SessionState } from "@/hooks/use-now"
-import type { SessionLite } from "@/lib/types"
+import { speakerNames, type SessionLite } from "@/lib/types"
 import { fmtTime, minutesBetween } from "@/lib/time"
 import { cn } from "@/lib/utils"
 import { venueLabel } from "@/lib/venue"
 
 import { computeGeometry, HEADER_PX, offsetPx, PX_PER_MIN } from "./geometry"
+
+const SCROLL_KEY = "fun26.scroll.grid"
 
 interface ScheduleGridProps {
   sessions: SessionLite[]
@@ -82,7 +84,7 @@ function SessionBlock({
             </span>
             {duration >= 35 && session.speakers.length > 0 && (
               <span className="line-clamp-1 text-xs text-muted-foreground italic">
-                {session.speakers.join(", ")}
+                {speakerNames(session)}
               </span>
             )}
           </>
@@ -92,7 +94,7 @@ function SessionBlock({
         <FavoriteButton
           slug={session.slug}
           size="icon-xs"
-          className="absolute top-1 right-1"
+          className="absolute top-1 right-1 bg-card/80"
         />
       )}
     </div>
@@ -117,19 +119,62 @@ export function ScheduleGrid({
   const nowTop =
     nowMinutes !== null ? HEADER_PX + nowMinutes * PX_PER_MIN : null
 
+  // Restore the last scroll position (e.g. when navigating back from a
+  // session); fall back to jumping to "now" on a fresh visit.
+  const restoredScroll = useRef(false)
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    try {
+      const saved = sessionStorage.getItem(SCROLL_KEY)
+      if (saved) {
+        const { l, t } = JSON.parse(saved) as { l: number; t: number }
+        el.scrollLeft = l
+        el.scrollTop = t
+        restoredScroll.current = true
+      }
+    } catch {
+      // sessionStorage unavailable — keep default position
+    }
+  }, [])
+
   const scrolledToNow = useRef(false)
   useEffect(() => {
-    // Jump to "now" once it's known, then leave scrolling to the user.
-    if (!scrolledToNow.current && nowVisible && nowTop !== null) {
+    if (
+      !restoredScroll.current &&
+      !scrolledToNow.current &&
+      nowVisible &&
+      nowTop !== null
+    ) {
       scrolledToNow.current = true
       scrollRef.current?.scrollTo({ top: Math.max(0, nowTop - 140) })
     }
   }, [nowVisible, nowTop])
 
+  const savePending = useRef(false)
+  function handleScroll() {
+    if (savePending.current) return
+    savePending.current = true
+    requestAnimationFrame(() => {
+      savePending.current = false
+      const el = scrollRef.current
+      if (!el) return
+      try {
+        sessionStorage.setItem(
+          SCROLL_KEY,
+          JSON.stringify({ l: el.scrollLeft, t: el.scrollTop })
+        )
+      } catch {
+        // ignore
+      }
+    })
+  }
+
   return (
     <div
       ref={scrollRef}
-      className="relative h-full overflow-auto overscroll-contain rounded-xl border bg-background"
+      onScroll={handleScroll}
+      className="relative h-full overflow-auto overscroll-contain border-y bg-background sm:rounded-xl sm:border"
     >
       <div className="relative w-max min-w-full">
         <div

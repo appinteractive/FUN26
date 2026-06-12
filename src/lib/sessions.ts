@@ -13,7 +13,10 @@ export async function getSessionsLite(): Promise<SessionLite[]> {
       stage: entry.data.stage,
       stageOrder: entry.data.stageOrder,
       kind: entry.data.kind,
-      speakers: entry.data.speakers.map((s) => s.name),
+      speakers: entry.data.speakers.map((s) => ({
+        name: s.name,
+        image: s.image,
+      })),
     }))
     .sort(
       (a, b) => a.start.localeCompare(b.start) || a.stageOrder - b.stageOrder

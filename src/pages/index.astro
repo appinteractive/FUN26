@@ -7,8 +7,8 @@ const sessions = await getSessionsLite()
 const stages = stagesOf(sessions)
 ---
 
-<Layout title="Schedule – FUN26" fullHeight>
-  <div class="mx-auto h-full w-full max-w-7xl px-4 py-3">
+<Layout title="Schedule – FUN26">
+  <div class="mx-auto w-full max-w-7xl px-3 sm:px-4">
     <ScheduleApp client:load sessions={sessions} stages={stages} />
   </div>
 </Layout>

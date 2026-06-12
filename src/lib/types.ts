@@ -1,3 +1,8 @@
+export interface SpeakerLite {
+  name: string
+  image: string
+}
+
 export interface SessionLite {
   slug: string
   title: string
@@ -7,7 +12,11 @@ export interface SessionLite {
   stage: string
   stageOrder: number
   kind: "talk" | "workshop" | "break"
-  speakers: string[]
+  speakers: SpeakerLite[]
+}
+
+export function speakerNames(session: SessionLite): string {
+  return session.speakers.map((s) => s.name).join(", ")
 }
 
 export const DAY_LABEL = "June 12, 2026"

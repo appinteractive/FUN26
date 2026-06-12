@@ -33,7 +33,9 @@ export function buildIcs(sessions: SessionLite[]): string {
       `SUMMARY:${escape(s.title)}`,
       `LOCATION:${escape(s.stage)}`,
       s.speakers.length
-        ? `DESCRIPTION:${escape(`Speaker: ${s.speakers.join(", ")}`)}`
+        ? `DESCRIPTION:${escape(
+            `Speaker: ${s.speakers.map((sp) => sp.name).join(", ")}`
+          )}`
         : "DESCRIPTION:",
       "END:VEVENT"
     )

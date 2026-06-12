@@ -18,10 +18,10 @@ export default defineConfig({
       srcDir: "src",
       filename: "sw.ts",
       manifest: {
-        name: "FUN26 – Freelance Unlocked",
+        name: "FUN26 Schedule (unofficial)",
         short_name: "FUN26",
         description:
-          "Schedule and personal favorites for the Freelance Unlocked conference, June 12, 2026.",
+          "Unofficial schedule and personal favorites for the Freelance Unlocked conference, June 12, 2026. Community-built, not affiliated with the organizers.",
         start_url: "/",
         scope: "/",
         display: "standalone",

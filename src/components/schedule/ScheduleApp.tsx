@@ -34,62 +34,70 @@ export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
   const favorites = mounted ? storedFavorites : []
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <Tabs
-          value={view}
-          onValueChange={(value) => $scheduleView.set(value as ScheduleView)}
-        >
-          <TabsList>
-            <TabsTrigger value="grid">
-              <LayoutGrid /> Grid
-            </TabsTrigger>
-            <TabsTrigger value="list">
-              <List /> List
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <Button
-          variant="outline"
-          aria-pressed={favoritesOnly}
-          onClick={() => $favoritesOnly.set(!favoritesOnly)}
-          className={cn(favoritesOnly && "border-primary text-primary")}
-        >
-          <Heart
-            data-icon="inline-start"
-            className={cn(favoritesOnly && "fill-primary stroke-primary")}
-          />
-          My schedule
-          <Badge
-            variant={favoritesOnly ? "default" : "secondary"}
-            className="tabular-nums"
+    <div className="flex flex-col">
+      <div className="sticky top-0 z-30 -mx-3 bg-background px-3 py-2 sm:-mx-4 sm:px-4">
+        <div className="flex items-center gap-2">
+          <Tabs
+            value={view}
+            onValueChange={(value) => {
+              $scheduleView.set(value as ScheduleView)
+              // Each view restores its own remembered position from here.
+              window.scrollTo(0, 0)
+            }}
           >
-            {favorites.length}
-          </Badge>
-        </Button>
+            <TabsList>
+              <TabsTrigger value="grid">
+                <LayoutGrid /> Grid
+              </TabsTrigger>
+              <TabsTrigger value="list">
+                <List /> List
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <div className="ml-auto">
-          <NotificationSettings sessions={sessions} />
+          <Button
+            variant="outline"
+            aria-pressed={favoritesOnly}
+            onClick={() => $favoritesOnly.set(!favoritesOnly)}
+            className={cn(favoritesOnly && "border-primary text-primary")}
+          >
+            <Heart
+              data-icon="inline-start"
+              className={cn(favoritesOnly && "fill-primary stroke-primary")}
+            />
+            <span className="hidden sm:inline">My schedule</span>
+            <Badge
+              variant={favoritesOnly ? "default" : "secondary"}
+              className="tabular-nums"
+            >
+              {favorites.length}
+            </Badge>
+          </Button>
+
+          <div className="ml-auto">
+            <NotificationSettings sessions={sessions} />
+          </div>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1">
-        {view === "grid" ? (
+      {view === "grid" ? (
+        <div className="-mx-3 mt-1 h-[calc(100dvh-4rem)] min-h-96 sm:mx-0">
           <ScheduleGrid
             sessions={sessions}
             stages={stages}
             favorites={favorites}
             favoritesOnly={favoritesOnly}
           />
-        ) : (
+        </div>
+      ) : (
+        <div className="mt-1">
           <ScheduleList
             sessions={sessions}
             favorites={favorites}
             favoritesOnly={favoritesOnly}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

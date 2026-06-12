@@ -25,10 +25,28 @@ const { title, start, end, stage, kind, speakers } = entry.data
   <article class="mx-auto w-full max-w-2xl px-4 py-6">
     <a
       href="/"
+      id="back-link"
       class="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground no-underline hover:text-foreground"
     >
       <ArrowLeft className="size-4" /> Schedule
     </a>
+    <script>
+      // Go back in history when we came from within the app, so the
+      // schedule's scroll position and view are restored.
+      document.getElementById("back-link")?.addEventListener("click", (e) => {
+        try {
+          const internal =
+            document.referrer &&
+            new URL(document.referrer).origin === location.origin
+          if (internal && history.length > 1) {
+            e.preventDefault()
+            history.back()
+          }
+        } catch {
+          // fall through to the plain link
+        }
+      })
+    </script>
 
     <div class="flex items-start justify-between gap-3">
       <h1 class="text-2xl leading-tight font-bold text-balance">{title}</h1>
