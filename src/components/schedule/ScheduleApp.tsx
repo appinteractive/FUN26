@@ -3,6 +3,8 @@ import { Heart, LayoutGrid, List } from "lucide-react"
 
 import { NotificationSettings } from "@/components/NotificationSettings"
 import { useMounted } from "@/hooks/use-mounted"
+import { useNow } from "@/hooks/use-now"
+import { fmtTime } from "@/lib/time"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -25,6 +27,7 @@ interface ScheduleAppProps {
 
 export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
   const mounted = useMounted()
+  const now = useNow()
   const storedView = useStore($scheduleView)
   const storedFavoritesOnly = useStore($favoritesOnly)
   const storedFavorites = useStore($favorites)
@@ -74,7 +77,16 @@ export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
             </Badge>
           </Button>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {now && (
+              <span
+                aria-label="Current time"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold tabular-nums"
+              >
+                <span className="size-1.5 rounded-full bg-primary" />
+                {fmtTime(now)}
+              </span>
+            )}
             <NotificationSettings sessions={sessions} />
           </div>
         </div>

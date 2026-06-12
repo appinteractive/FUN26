@@ -10,7 +10,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import { sessionState, useNow, type SessionState } from "@/hooks/use-now"
+import {
+  sessionState,
+  startsInMinutes,
+  useNow,
+  type SessionState,
+} from "@/hooks/use-now"
 import { speakerNames, type SessionLite } from "@/lib/types"
 import { fmtTime } from "@/lib/time"
 import { cn } from "@/lib/utils"
@@ -51,10 +56,18 @@ function useListScrollMemory() {
   }, [])
 }
 
-function NowBadge() {
+function NowBadge({ emphasized = false }: { emphasized?: boolean }) {
+  if (emphasized) {
+    return (
+      <Badge className="gap-1">
+        <span className="size-1.5 animate-pulse rounded-full bg-primary-foreground" />
+        Now
+      </Badge>
+    )
+  }
   return (
-    <Badge className="gap-1">
-      <span className="size-1.5 animate-pulse rounded-full bg-primary-foreground" />
+    <Badge variant="outline" className="gap-1 border-primary/40 text-primary">
+      <span className="size-1.5 animate-pulse rounded-full bg-primary" />
       Now
     </Badge>
   )
@@ -88,15 +101,23 @@ function BreakRow({
 function SessionCard({
   session,
   state,
+  now,
+  favorited,
 }: {
   session: SessionLite
   state: SessionState | null
+  now: Date | null
+  favorited: boolean
 }) {
+  const soon = startsInMinutes(session.start, now)
+  const live = state === "live"
   return (
     <div
       className={cn(
         "flex items-start gap-1 rounded-xl border bg-card p-3 transition-colors hover:border-primary/60",
-        state === "live" && "border-primary bg-primary/5",
+        // Your favorited running session shouts; other running sessions whisper.
+        live &&
+          (favorited ? "border-primary bg-primary/10" : "border-primary/40"),
         state === "past" && "opacity-50"
       )}
     >
@@ -126,11 +147,21 @@ function SessionCard({
           </span>
         )}
         <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-          {state === "live" && <NowBadge />}
+          {live && <NowBadge emphasized={favorited} />}
           <span className="inline-flex items-center gap-1 font-medium tabular-nums">
             <Clock className="size-3.5 text-muted-foreground" />
             {fmtTime(session.start)} – {fmtTime(session.end)}
           </span>
+          {soon !== null && (
+            <span
+              className={cn(
+                "font-semibold tabular-nums",
+                soon <= 15 ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              in {soon} min
+            </span>
+          )}
           <span className="inline-flex items-center gap-1 text-muted-foreground">
             <MapPin className="size-3.5" />
             {session.stage}
@@ -197,6 +228,8 @@ export function ScheduleList({
                   key={session.slug}
                   session={session}
                   state={state}
+                  now={now}
+                  favorited={favorites.includes(session.slug)}
                 />
               )
             })}

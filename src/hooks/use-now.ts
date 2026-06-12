@@ -37,6 +37,23 @@ export function useNow(): Date | null {
   )
 }
 
+/**
+ * Whole minutes until `start` (ceiled, so "in 1 min" holds until it actually
+ * starts), or null before mount / when start is not in the near future.
+ * Only returns values in (0, maxMinutes] — the "just around the corner" window.
+ */
+export function startsInMinutes(
+  start: string,
+  now: Date | null,
+  maxMinutes = 60
+): number | null {
+  if (!now) return null
+  const minutes = Math.ceil(
+    (new Date(start).getTime() - now.getTime()) / 60_000
+  )
+  return minutes > 0 && minutes <= maxMinutes ? minutes : null
+}
+
 export type SessionState = "past" | "live" | "upcoming"
 
 export function sessionState(

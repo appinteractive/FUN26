@@ -2,7 +2,12 @@ import { useEffect, useRef } from "react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
 import { Badge } from "@/components/ui/badge"
-import { sessionState, useNow, type SessionState } from "@/hooks/use-now"
+import {
+  sessionState,
+  startsInMinutes,
+  useNow,
+  type SessionState,
+} from "@/hooks/use-now"
 import { speakerNames, type SessionLite } from "@/lib/types"
 import { fmtTime, minutesBetween } from "@/lib/time"
 import { cn } from "@/lib/utils"
@@ -25,15 +30,21 @@ function SessionBlock({
   height,
   dimmed,
   state,
+  now,
+  favorited,
 }: {
   session: SessionLite
   top: number
   height: number
   dimmed: boolean
   state: SessionState | null
+  now: Date | null
+  favorited: boolean
 }) {
   const duration = minutesBetween(session.start, session.end)
   const isBreak = session.kind === "break"
+  const soon = startsInMinutes(session.start, now)
+  const live = state === "live" && !isBreak
 
   return (
     <div
@@ -51,7 +62,9 @@ function SessionBlock({
           isBreak
             ? "items-center justify-center border-dashed bg-muted/50 text-muted-foreground"
             : "bg-card transition-colors hover:border-primary/60",
-          state === "live" && !isBreak && "border-primary bg-primary/5"
+          // Your favorited running session shouts; other running sessions whisper.
+          live &&
+            (favorited ? "border-primary bg-primary/10" : "border-primary/40")
         )}
       >
         {isBreak ? (
@@ -62,9 +75,31 @@ function SessionBlock({
           <>
             <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
               {fmtTime(session.start)}
-              {state === "live" && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary px-1.5 text-[0.6rem] font-bold tracking-wide text-primary-foreground uppercase">
-                  <span className="size-1.5 animate-pulse rounded-full bg-primary-foreground" />
+              {soon !== null && (
+                <span
+                  className={cn(
+                    "tabular-nums",
+                    soon > 15 && "font-medium text-muted-foreground"
+                  )}
+                >
+                  in {soon}m
+                </span>
+              )}
+              {live && (
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-1.5 text-[0.6rem] font-bold tracking-wide uppercase",
+                    favorited
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary/40 text-primary"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "size-1.5 animate-pulse rounded-full",
+                      favorited ? "bg-primary-foreground" : "bg-primary"
+                    )}
+                  />
                   Now
                 </span>
               )}
@@ -252,6 +287,8 @@ export function ScheduleGrid({
                     }
                     dimmed={favoritesOnly && !favorites.includes(session.slug)}
                     state={sessionState(session.start, session.end, now)}
+                    now={now}
+                    favorited={favorites.includes(session.slug)}
                   />
                 ))}
             </div>
