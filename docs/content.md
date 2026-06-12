@@ -24,6 +24,34 @@ serves HTTP 403 to non-browser clients). Verify against
 https://freelanceunlocked.com/en/schedule when possible — especially
 English-titled talks, which could still be held in German.
 
+### Day 1 (June 11) provenance — needs verification
+
+The June 11 program was reconstructed from search-engine indexes because
+the official site blocks automated access. Each affected session carries
+a note in its body. Confidence levels:
+
+- **exali Main Stage**: time slots and speakers corroborated twice with
+  consistent arithmetic — high confidence. Talk titles were not indexed,
+  so sessions use "Talk by <speaker>" placeholders.
+- **Grow & Sell / Beyond the hustle**: speaker lineup and order
+  corroborated, but start times may be uniformly up to 30 minutes later,
+  and the day-1 attribution itself is inferred (no overlap with the
+  complete day-2 speaker list). One real title is known (Oliver
+  Gehrmann's YouTube lead-gen talk).
+- **freelancermap Stage and the 5th stage on day 1, and anything after
+  17:20 (evening program)**: unknown — not in any index.
+- Known talk pages not yet placed in the schedule: "The Global State of
+  Freelancing", "Freelancing at a Crossroads" (panel incl. Matthew
+  Mottola), "Unconference", "Freelance Smarter" (SMartDE eG), "AI in
+  Action: Supercharge Your Workflow Today".
+
+Day-1 speakers have generated initials avatars (`public/speakers/*.svg`)
+and no `/speakers` profile pages yet — their roles/links are not verified
+to the same standard as the day-2 batch. To fix all of the above
+properly, load https://freelanceunlocked.com/en/schedule in a normal
+browser (or allowlist the domain for this environment) and patch the
+files.
+
 ### Session resources (slides, links, …)
 
 Add a `resources` list to a session's frontmatter to show a
