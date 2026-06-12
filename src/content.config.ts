@@ -20,7 +20,27 @@ const sessions = defineCollection({
         })
       )
       .default([]),
+    resources: z
+      .array(
+        z.object({
+          label: z.string(),
+          url: z.url(),
+          kind: z.enum(["slides", "video", "code", "link"]).default("link"),
+        })
+      )
+      .default([]),
   }),
 })
 
-export const collections = { sessions }
+const speakers = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/speakers" }),
+  schema: z.object({
+    name: z.string(),
+    role: z.string().optional(),
+    image: z.string(),
+    linkedin: z.url().optional(),
+    website: z.url().optional(),
+  }),
+})
+
+export const collections = { sessions, speakers }

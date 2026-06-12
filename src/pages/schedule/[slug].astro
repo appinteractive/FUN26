@@ -1,10 +1,21 @@
 ---
 import { getCollection, render } from "astro:content"
-import { ArrowLeft, Clock, MapPin } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronRight,
+  Clock,
+  Code,
+  Link as LinkIcon,
+  MapPin,
+  Presentation,
+  Video,
+} from "lucide-react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
+import { SessionNotes } from "@/components/SessionNotes"
 import { Badge } from "@/components/ui/badge"
 import Layout from "@/layouts/main.astro"
+import { getSpeakersByName } from "@/lib/speakers"
 import { fmtTime } from "@/lib/time"
 import { venueLabel } from "@/lib/venue"
 
@@ -18,7 +29,16 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
-const { title, start, end, stage, kind, speakers } = entry.data
+const { title, start, end, stage, kind, speakers, resources } = entry.data
+
+const profiles = await getSpeakersByName()
+
+const resourceIcons = {
+  slides: Presentation,
+  video: Video,
+  code: Code,
+  link: LinkIcon,
+}
 ---
 
 <Layout title={`${title} – FUN26`}>
@@ -74,22 +94,36 @@ const { title, start, end, stage, kind, speakers } = entry.data
     {
       speakers.length > 0 && (
         <div class="mt-6 flex flex-col gap-4">
-          {speakers.map((speaker) => (
-            <div class="flex items-center gap-4">
-              <img
-                src={speaker.image}
-                alt={speaker.name}
-                loading="lazy"
-                class="size-16 shrink-0 rounded-full border object-cover"
-              />
-              <div class="min-w-0">
-                <p class="font-semibold">{speaker.name}</p>
-                {speaker.role && (
-                  <p class="text-sm text-muted-foreground">{speaker.role}</p>
-                )}
-              </div>
-            </div>
-          ))}
+          {speakers.map((speaker) => {
+            const profile = profiles.get(speaker.name)
+            const row = (
+              <>
+                <img
+                  src={speaker.image}
+                  alt={speaker.name}
+                  loading="lazy"
+                  class="size-16 shrink-0 rounded-full border object-cover"
+                />
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold">{speaker.name}</p>
+                  {speaker.role && (
+                    <p class="text-sm text-muted-foreground">{speaker.role}</p>
+                  )}
+                </div>
+              </>
+            )
+            return profile ? (
+              <a
+                href={`/speakers/${profile.id}`}
+                class="-mx-2 flex items-center gap-4 rounded-xl px-2 py-1.5 no-underline transition-colors hover:bg-muted/60"
+              >
+                {row}
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+              </a>
+            ) : (
+              <div class="flex items-center gap-4 py-1.5">{row}</div>
+            )
+          })}
         </div>
       )
     }
@@ -97,5 +131,33 @@ const { title, start, end, stage, kind, speakers } = entry.data
     <div class="prose mt-6 max-w-none prose-neutral dark:prose-invert">
       <Content />
     </div>
+
+    {
+      resources.length > 0 && (
+        <section class="mt-8">
+          <h2 class="text-sm font-semibold">Slides & resources</h2>
+          <ul class="mt-2 flex flex-col gap-1.5">
+            {resources.map((resource) => {
+              const Icon = resourceIcons[resource.kind]
+              return (
+                <li>
+                  <a
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener"
+                    class="inline-flex items-center gap-2 text-sm font-medium text-foreground underline-offset-2 hover:text-primary hover:underline"
+                  >
+                    <Icon className="size-4 shrink-0 text-muted-foreground" />
+                    {resource.label}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      )
+    }
+
+    {kind !== "break" && <SessionNotes client:load slug={entry.id} />}
   </article>
 </Layout>

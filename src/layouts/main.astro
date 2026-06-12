@@ -67,8 +67,16 @@ const sessions = await getSessionsLite()
           >
             unofficial
           </span>
+          <nav class="ml-auto flex items-center gap-4">
+            <a
+              href="/speakers"
+              class="text-sm font-medium text-muted-foreground no-underline hover:text-foreground"
+            >
+              Speakers
+            </a>
+          </nav>
           <span
-            class="ml-auto rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+            class="hidden rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground sm:inline"
           >
             {DAY_LABEL}
           </span>

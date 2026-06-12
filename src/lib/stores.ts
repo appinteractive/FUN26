@@ -61,3 +61,22 @@ export const $favoritesOnly = persistentAtom<boolean>(
   false,
   jsonCodec<boolean>(false)
 )
+
+/** Personal notes per session, keyed by session slug. Stored only on device. */
+export const $notes = persistentAtom<Record<string, string>>(
+  "fun26.notes",
+  {},
+  jsonCodec<Record<string, string>>({})
+)
+
+export function setNote(slug: string, text: string) {
+  const current = $notes.get()
+  if (text.trim() === "") {
+    if (!(slug in current)) return
+    const next = { ...current }
+    delete next[slug]
+    $notes.set(next)
+  } else {
+    $notes.set({ ...current, [slug]: text })
+  }
+}
