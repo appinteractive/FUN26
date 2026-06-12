@@ -2,6 +2,7 @@ import { useStore } from "@nanostores/react"
 import { Heart, LayoutGrid, List } from "lucide-react"
 
 import { NotificationSettings } from "@/components/NotificationSettings"
+import { ShareSchedule } from "@/components/ShareSchedule"
 import { useMounted } from "@/hooks/use-mounted"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -74,7 +75,8 @@ export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
             </Badge>
           </Button>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <ShareSchedule sessions={sessions} favorites={favorites} />
             <NotificationSettings sessions={sessions} />
           </div>
         </div>

@@ -12,6 +12,10 @@ Built with Astro 6, React 19, Tailwind 4, and shadcn/ui on Base UI.
   list view. View choice is remembered.
 - **Favorites** — heart any session ("My schedule" filter). Stored in
   `localStorage`, synced across tabs and pages.
+- **Share & import** — share favorites as a `/?fav=…` link (copy or
+  native share sheet). Opening the link in a browser offers the import;
+  the installed PWA has no address bar, so the same link can be pasted
+  into the share dialog's import field instead. Add or replace.
 - **Reminders** — browser notifications N minutes before favorited
   sessions (5/10/15/30 min lead). Fire while the app is open or installed;
   `.ics` calendar export of favorites as the guaranteed fallback.
