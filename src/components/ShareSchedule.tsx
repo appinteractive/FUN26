@@ -24,9 +24,11 @@ import { buildShareLink, decodeFavParam, parseShareLink } from "@/lib/share"
 import { addFavorites, replaceFavorites } from "@/lib/stores"
 import type { SessionLite } from "@/lib/types"
 
-type Notice = { kind: "imported"; added: number; total: number } | {
-  kind: "invalid"
-}
+type Notice =
+  | { kind: "imported"; added: number; total: number }
+  | {
+      kind: "invalid"
+    }
 
 export function ShareSchedule({
   sessions,

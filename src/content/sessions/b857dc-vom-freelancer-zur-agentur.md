@@ -5,6 +5,7 @@ end: 2026-06-12T15:55:00+02:00
 stage: "exali Main Stage"
 stageOrder: 0
 kind: talk
+language: de
 speakers:
   - name: "Thomas Marbella"
     role: "CEO at OneCode"

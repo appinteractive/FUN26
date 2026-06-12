@@ -8,6 +8,21 @@ export function fmtTime(iso: string | Date): string {
   })
 }
 
+/** Calendar day in the event's timezone, e.g. "2026-06-11". */
+export function dayKey(iso: string | Date): string {
+  return new Date(iso).toLocaleDateString("en-CA", { timeZone: BERLIN })
+}
+
+/** Short weekday + date label for a day key, e.g. "Thu, June 11". */
+export function fmtDay(key: string): string {
+  return new Date(`${key}T12:00:00+02:00`).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    timeZone: BERLIN,
+  })
+}
+
 export function minutesBetween(a: string | Date, b: string | Date): number {
   return Math.round((new Date(b).getTime() - new Date(a).getTime()) / 60_000)
 }

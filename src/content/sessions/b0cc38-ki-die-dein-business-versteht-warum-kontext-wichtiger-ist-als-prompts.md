@@ -5,6 +5,7 @@ end: 2026-06-12T14:30:00+02:00
 stage: "Grow & Sell"
 stageOrder: 1
 kind: talk
+language: de
 speakers:
   - name: "Jan Schlie"
     role: "VP of AI Jimdo"

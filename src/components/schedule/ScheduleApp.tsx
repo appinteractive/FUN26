@@ -10,9 +10,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   $favorites,
   $favoritesOnly,
+  $notes,
+  $scheduleDay,
   $scheduleView,
   type ScheduleView,
 } from "@/lib/stores"
+import { dayKey, fmtDay } from "@/lib/time"
 import type { SessionLite } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
@@ -21,18 +24,37 @@ import { ScheduleList } from "./ScheduleList"
 
 interface ScheduleAppProps {
   sessions: SessionLite[]
-  stages: string[]
 }
 
-export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
+function stagesOf(sessions: SessionLite[]): string[] {
+  return [...new Map(sessions.map((s) => [s.stageOrder, s.stage])).entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([, name]) => name)
+}
+
+export function ScheduleApp({ sessions }: ScheduleAppProps) {
   const mounted = useMounted()
   const storedView = useStore($scheduleView)
   const storedFavoritesOnly = useStore($favoritesOnly)
   const storedFavorites = useStore($favorites)
+  const storedNotes = useStore($notes)
+  const storedDay = useStore($scheduleDay)
   // Render with defaults until mounted so SSR markup matches hydration.
   const view = mounted ? storedView : "grid"
   const favoritesOnly = mounted ? storedFavoritesOnly : false
   const favorites = mounted ? storedFavorites : []
+  const notedSlugs = mounted ? Object.keys(storedNotes) : []
+
+  const days = [...new Set(sessions.map((s) => dayKey(s.start)))].sort()
+  // Stored day if valid, else today (during the event), else the first day.
+  const fallbackDay = days.includes(dayKey(new Date()))
+    ? dayKey(new Date())
+    : days[0]
+  const day =
+    mounted && storedDay && days.includes(storedDay) ? storedDay : fallbackDay
+
+  const daySessions = sessions.filter((s) => dayKey(s.start) === day)
+  const stages = stagesOf(daySessions)
 
   return (
     <div className="flex flex-col">
@@ -80,23 +102,44 @@ export function ScheduleApp({ sessions, stages }: ScheduleAppProps) {
             <NotificationSettings sessions={sessions} />
           </div>
         </div>
+
+        {days.length > 1 && (
+          <Tabs
+            value={day}
+            onValueChange={(value) => {
+              $scheduleDay.set(value)
+              window.scrollTo(0, 0)
+            }}
+            className="mt-2"
+          >
+            <TabsList className="w-full">
+              {days.map((d) => (
+                <TabsTrigger key={d} value={d} className="flex-1">
+                  {fmtDay(d)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        )}
       </div>
 
       {view === "grid" ? (
         <div className="-mx-3 mt-1 h-[calc(100dvh-4rem)] min-h-96 sm:mx-0">
           <ScheduleGrid
-            sessions={sessions}
+            sessions={daySessions}
             stages={stages}
             favorites={favorites}
             favoritesOnly={favoritesOnly}
+            notedSlugs={notedSlugs}
           />
         </div>
       ) : (
         <div className="mt-1">
           <ScheduleList
-            sessions={sessions}
+            sessions={daySessions}
             favorites={favorites}
             favoritesOnly={favoritesOnly}
+            notedSlugs={notedSlugs}
           />
         </div>
       )}

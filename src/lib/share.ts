@@ -21,10 +21,7 @@ export function buildShareLink(favorites: string[]): string {
 }
 
 /** Resolve a `fav` parameter value to known session slugs. */
-export function decodeFavParam(
-  raw: string,
-  sessions: SessionLite[]
-): string[] {
+export function decodeFavParam(raw: string, sessions: SessionLite[]): string[] {
   const ids = new Set(
     raw
       .split(",")

@@ -16,7 +16,7 @@ import { SessionNotes } from "@/components/SessionNotes"
 import { Badge } from "@/components/ui/badge"
 import Layout from "@/layouts/main.astro"
 import { getSpeakersByName } from "@/lib/speakers"
-import { fmtTime } from "@/lib/time"
+import { dayKey, fmtDay, fmtTime } from "@/lib/time"
 import { venueLabel } from "@/lib/venue"
 
 export async function getStaticPaths() {
@@ -29,7 +29,8 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
-const { title, start, end, stage, kind, speakers, resources } = entry.data
+const { title, start, end, stage, kind, language, speakers, resources } =
+  entry.data
 
 const profiles = await getSpeakersByName()
 
@@ -82,13 +83,20 @@ const resourceIcons = {
     >
       <span class="inline-flex items-center gap-1.5">
         <Clock className="size-4" />
-        {fmtTime(start)} – {fmtTime(end)}
+        {fmtDay(dayKey(start))}, {fmtTime(start)} – {fmtTime(end)}
       </span>
       <span class="inline-flex items-center gap-1.5">
         <MapPin className="size-4" />
         {stage}{venueLabel(stage) && ` · ${venueLabel(stage)}`}
       </span>
       {kind === "workshop" && <Badge variant="secondary">Workshop</Badge>}
+      {
+        language && (
+          <Badge variant="outline" className="uppercase">
+            {language === "de" ? "German" : "English"}
+          </Badge>
+        )
+      }
     </div>
 
     {

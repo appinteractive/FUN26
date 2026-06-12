@@ -8,8 +8,21 @@ surface immediately.
 
 One file per session. Frontmatter: `title`, `start`/`end` (ISO with
 `+02:00` offset), `stage`, `stageOrder`, `kind` (`talk` | `workshop` |
-`break`), `speakers` (inline name/role/image). The markdown body is the
-session description.
+`break`), optional `language` (`de` | `en`), `speakers` (inline
+name/role/image). The markdown body is the session description.
+
+The schedule UI derives the event days from the session start dates — a
+day switcher appears automatically as soon as sessions span more than one
+calendar day (Europe/Berlin), and the header date range follows along.
+Stages are computed per day, so the two days can have different stage
+layouts.
+
+Language provenance: the `language` tags were inferred from the talk
+titles (German title → `de`), since the official schedule's language
+labels are not reachable from this environment (freelanceunlocked.com
+serves HTTP 403 to non-browser clients). Verify against
+https://freelanceunlocked.com/en/schedule when possible — especially
+English-titled talks, which could still be held in German.
 
 ### Session resources (slides, links, …)
 
@@ -27,7 +40,10 @@ resources:
     kind: code
 ```
 
-Speakers/attendees can PR these — the repo is the CMS.
+Speakers/attendees can PR these — the repo is the CMS. For files hosted
+by the app itself (e.g. a speaker's handout PDF), put the file in
+`public/resources/` and use a site-relative `url` like
+`/resources/the-beautiful-mosaic-handout.pdf`.
 
 ## Speaker profiles (`src/content/speakers/*.md`)
 
@@ -53,3 +69,6 @@ their official government profile pages instead of a personal site.
 Notes are per-session, stored only in `localStorage`
 (`fun26.notes`, keyed by session slug) via a persistent nanostore in
 `src/lib/stores.ts`. No server involved; clearing site data deletes them.
+All notes are collected on the `/notes` page (linked in the header),
+which also offers a markdown export; sessions with notes show a small
+pen icon in the schedule list and grid.

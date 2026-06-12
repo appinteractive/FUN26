@@ -5,6 +5,7 @@ end: 2026-06-12T11:00:00+02:00
 stage: "Grow & Sell"
 stageOrder: 1
 kind: talk
+language: de
 speakers:
   - name: "Bao Hanh Nguyen"
     role: "AI & Design Thinking Coach"

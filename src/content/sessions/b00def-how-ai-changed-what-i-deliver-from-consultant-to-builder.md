@@ -5,6 +5,7 @@ end: 2026-06-12T16:00:00+02:00
 stage: "Grow & Sell"
 stageOrder: 1
 kind: talk
+language: en
 speakers:
   - name: "Lucas Chevillard"
     role: "Freelancer Email Marketing & CRM Strategy"

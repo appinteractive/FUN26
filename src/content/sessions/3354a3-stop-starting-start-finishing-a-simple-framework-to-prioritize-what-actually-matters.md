@@ -5,6 +5,7 @@ end: 2026-06-12T10:30:00+02:00
 stage: "Grow & Sell"
 stageOrder: 1
 kind: talk
+language: en
 speakers:
   - name: "Caroline Pollklaesener"
     role: "Freelance Project Management & Process Optimization"

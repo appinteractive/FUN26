@@ -63,7 +63,11 @@ export function SessionNotes({ slug }: SessionNotesProps) {
         disabled={!mounted}
       />
       <p className="mt-1.5 text-xs text-muted-foreground">
-        Saved automatically — only on this device.
+        Saved automatically — only on this device. Find everything under{" "}
+        <a href="/notes" className="underline underline-offset-2">
+          My notes
+        </a>
+        .
       </p>
     </section>
   )

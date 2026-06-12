@@ -5,6 +5,7 @@ end: 2026-06-12T11:30:00+02:00
 stage: "exali Main Stage"
 stageOrder: 0
 kind: talk
+language: de
 speakers:
   - name: "Jörn Freynick"
     role: "General Secretary at BAGSV & Head of Policy at VGSD"

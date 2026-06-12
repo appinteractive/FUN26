@@ -62,6 +62,9 @@ export const $favoritesOnly = persistentAtom<boolean>(
   jsonCodec<boolean>(false)
 )
 
+/** Selected schedule day (day key like "2026-06-11"); empty = auto. */
+export const $scheduleDay = persistentAtom<string>("fun26.scheduleDay", "")
+
 /** Personal notes per session, keyed by session slug. Stored only on device. */
 export const $notes = persistentAtom<Record<string, string>>(
   "fun26.notes",

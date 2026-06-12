@@ -11,6 +11,7 @@ const sessions = defineCollection({
     stage: z.string(),
     stageOrder: z.number(),
     kind: z.enum(["talk", "workshop", "break"]),
+    language: z.enum(["de", "en"]).optional(),
     speakers: z
       .array(
         z.object({
@@ -24,7 +25,8 @@ const sessions = defineCollection({
       .array(
         z.object({
           label: z.string(),
-          url: z.url(),
+          // Absolute URL or site-relative path (e.g. /resources/foo.pdf)
+          url: z.string(),
           kind: z.enum(["slides", "video", "code", "link"]).default("link"),
         })
       )
