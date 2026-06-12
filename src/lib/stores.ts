@@ -29,6 +29,15 @@ export function toggleFavorite(slug: string) {
   )
 }
 
+export function addFavorites(slugs: string[]) {
+  const current = $favorites.get()
+  $favorites.set([...current, ...slugs.filter((s) => !current.includes(s))])
+}
+
+export function replaceFavorites(slugs: string[]) {
+  $favorites.set([...slugs])
+}
+
 export interface ReminderSettings {
   enabled: boolean
   leadMinutes: number
