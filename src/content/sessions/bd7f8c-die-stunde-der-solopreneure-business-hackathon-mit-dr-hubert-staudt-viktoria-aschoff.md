@@ -5,6 +5,7 @@ end: 2026-06-12T12:00:00+02:00
 stage: "Workshop Room"
 stageOrder: 4
 kind: workshop
+language: de
 speakers:
   - name: "Hubert Staudt"
     role: "Ex-CEO top itservices & B2B Go-to-Market Scaling Expert"

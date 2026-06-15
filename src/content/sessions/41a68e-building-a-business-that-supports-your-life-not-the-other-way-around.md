@@ -5,6 +5,7 @@ end: 2026-06-12T11:10:00+02:00
 stage: "Beyond the hustle"
 stageOrder: 2
 kind: talk
+language: en
 speakers:
   - name: "Magda Sokolovic"
     role: "Founder and Webflow Developer"

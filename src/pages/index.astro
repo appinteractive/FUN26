@@ -1,14 +1,13 @@
 ---
 import Layout from "@/layouts/main.astro"
 import { ScheduleApp } from "@/components/schedule/ScheduleApp"
-import { getSessionsLite, stagesOf } from "@/lib/sessions"
+import { getSessionsLite } from "@/lib/sessions"
 
 const sessions = await getSessionsLite()
-const stages = stagesOf(sessions)
 ---
 
 <Layout title="Schedule – FUN26">
   <div class="mx-auto w-full max-w-7xl px-3 sm:px-4">
-    <ScheduleApp client:load sessions={sessions} stages={stages} />
+    <ScheduleApp client:load sessions={sessions} />
   </div>
 </Layout>

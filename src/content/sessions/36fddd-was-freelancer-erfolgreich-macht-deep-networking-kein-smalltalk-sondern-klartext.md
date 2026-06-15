@@ -5,6 +5,7 @@ end: 2026-06-12T11:15:00+02:00
 stage: "freelancermap Stage"
 stageOrder: 3
 kind: talk
+language: de
 speakers:
   - name: "Sandra Löhning"
     role: "Senior Partner Manager Europe at exali AG"

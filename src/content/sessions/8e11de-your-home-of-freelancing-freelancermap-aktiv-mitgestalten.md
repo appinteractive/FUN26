@@ -5,6 +5,7 @@ end: 2026-06-12T12:00:00+02:00
 stage: "freelancermap Stage"
 stageOrder: 3
 kind: talk
+language: de
 speakers:
   - name: "Lena Symanzik"
     role: "Product Manager at freelancermap"

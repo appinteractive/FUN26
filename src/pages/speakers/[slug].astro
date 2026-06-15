@@ -1,0 +1,131 @@
+---
+import { getCollection, render } from "astro:content"
+import { ArrowLeft, Clock, Globe, MapPin } from "lucide-react"
+
+import { Badge } from "@/components/ui/badge"
+import Layout from "@/layouts/main.astro"
+import { getSpeakerEntries, sessionsOfSpeaker } from "@/lib/speakers"
+import { fmtTime } from "@/lib/time"
+import { venueLabel } from "@/lib/venue"
+
+export async function getStaticPaths() {
+  const speakers = await getSpeakerEntries()
+  return speakers.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+const { name, role, image, linkedin, website } = entry.data
+const hasBio = entry.body && entry.body.trim().length > 0
+
+const allSessions = await getCollection("sessions")
+const sessions = sessionsOfSpeaker(name, allSessions)
+---
+
+<Layout title={`${name} – FUN26`}>
+  <article class="mx-auto w-full max-w-2xl px-4 py-6">
+    <a
+      href="/speakers"
+      class="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground no-underline hover:text-foreground"
+    >
+      <ArrowLeft className="size-4" /> Speakers
+    </a>
+
+    <div class="flex items-center gap-5">
+      <img
+        src={image}
+        alt={name}
+        class="size-24 shrink-0 rounded-full border object-cover sm:size-28"
+      />
+      <div class="min-w-0">
+        <h1 class="text-2xl leading-tight font-bold text-balance">{name}</h1>
+        {role && <p class="mt-1 text-sm text-muted-foreground">{role}</p>}
+      </div>
+    </div>
+
+    {
+      (linkedin || website) && (
+        <div class="mt-5 flex flex-wrap gap-2">
+          {linkedin && (
+            <a
+              href={linkedin}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium no-underline transition-colors hover:bg-muted"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="size-4 text-muted-foreground"
+              >
+                <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.11 20.45H3.56V9h3.55v11.45z" />
+              </svg>
+              LinkedIn
+            </a>
+          )}
+          {website && (
+            <a
+              href={website}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium no-underline transition-colors hover:bg-muted"
+            >
+              <Globe className="size-4 text-muted-foreground" />
+              {new URL(website).hostname.replace(/^www\./, "")}
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    {
+      hasBio && (
+        <div class="prose mt-6 max-w-none prose-neutral dark:prose-invert">
+          <Content />
+        </div>
+      )
+    }
+
+    {
+      sessions.length > 0 && (
+        <section class="mt-8">
+          <h2 class="text-sm font-semibold">
+            {sessions.length === 1 ? "Session" : "Sessions"} at FUN26
+          </h2>
+          <ul class="mt-2 flex flex-col gap-2">
+            {sessions.map((session) => (
+              <li>
+                <a
+                  href={`/schedule/${session.id}`}
+                  class="block rounded-xl border px-4 py-3 no-underline transition-colors hover:bg-muted/60"
+                >
+                  <p class="font-medium text-balance">{session.data.title}</p>
+                  <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                    <span class="inline-flex items-center gap-1.5">
+                      <Clock className="size-3.5" />
+                      {fmtTime(session.data.start)} –{" "}
+                      {fmtTime(session.data.end)}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                      <MapPin className="size-3.5" />
+                      {session.data.stage}
+                      {venueLabel(session.data.stage) &&
+                        ` · ${venueLabel(session.data.stage)}`}
+                    </span>
+                    {session.data.kind === "workshop" && (
+                      <Badge variant="secondary">Workshop</Badge>
+                    )}
+                  </p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</Layout>

@@ -5,6 +5,7 @@ end: 2026-06-12T15:30:00+02:00
 stage: "Workshop Room"
 stageOrder: 4
 kind: workshop
+language: en
 speakers:
   - name: "Jon Younger"
     role: "HR tech thought-leader, author, and advisor. Forbes contributor."

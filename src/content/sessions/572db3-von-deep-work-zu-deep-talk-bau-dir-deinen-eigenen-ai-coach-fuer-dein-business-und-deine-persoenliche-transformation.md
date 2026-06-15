@@ -5,6 +5,7 @@ end: 2026-06-12T15:30:00+02:00
 stage: "Beyond the hustle"
 stageOrder: 2
 kind: talk
+language: de
 speakers:
   - name: "Fabian Werkmeister"
     role: "Data Engineering Consultant"

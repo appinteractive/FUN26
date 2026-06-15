@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/main.astro"
+import { getSpeakerEntries } from "@/lib/speakers"
+
+const speakers = await getSpeakerEntries()
+---
+
+<Layout title="Speakers – FUN26">
+  <div class="mx-auto w-full max-w-7xl px-4 py-6">
+    <h1 class="text-2xl leading-tight font-bold">Speakers</h1>
+    <p class="mt-1 text-sm text-muted-foreground">
+      Everyone on stage at Freelance Unlocked 2026.
+    </p>
+
+    <ul
+      class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+    >
+      {
+        speakers.map((speaker) => (
+          <li>
+            <a
+              href={`/speakers/${speaker.id}`}
+              class="flex h-full flex-col items-center gap-3 rounded-xl border p-4 text-center no-underline transition-colors hover:bg-muted/60"
+            >
+              <img
+                src={speaker.data.image}
+                alt={speaker.data.name}
+                loading="lazy"
+                class="size-20 rounded-full border object-cover"
+              />
+              <div class="min-w-0">
+                <p class="font-semibold text-balance">{speaker.data.name}</p>
+                {speaker.data.role && (
+                  <p class="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                    {speaker.data.role}
+                  </p>
+                )}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
