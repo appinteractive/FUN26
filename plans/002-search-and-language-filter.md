@@ -26,7 +26,7 @@
 
 The schedule has 69 sessions across up to 5 parallel stages per day, and the
 content is mixed German/English. A `language` tag already exists on every talk
-and is *displayed* (a `DE`/`EN` badge), but there is **no way to filter or
+and is _displayed_ (a `DE`/`EN` badge), but there is **no way to filter or
 search**. The only controls today are the day switcher and a "My schedule"
 (favorites-only) toggle. An attendee deciding "which of these five rooms, in a
 language I follow, is about X" has to eyeball the whole grid. This plan adds a
@@ -65,7 +65,7 @@ How filtering already works in each view (this is the pattern to mirror):
     : sessions
   ```
   and shows an `Empty` state when `visible.length === 0` (`:208-222`).
-- **Grid** keeps every session (the time axis needs them) and *dims* non-matches
+- **Grid** keeps every session (the time axis needs them) and _dims_ non-matches
   (`src/components/schedule/ScheduleGrid.tsx:288`):
   ```tsx
   dimmed={favoritesOnly && !favorites.includes(session.slug)}
@@ -77,6 +77,7 @@ stageOrder, kind: "talk"|"workshop"|"break", language?: "de"|"en", speakers:
 speaker names with `", "`.
 
 **UI primitives available** (match these exemplars):
+
 - `src/components/ui/input.tsx` — `Input` (Base UI input), already styled `h-8`.
 - `src/components/ui/toggle-group.tsx` — `ToggleGroup` / `ToggleGroupItem`. See
   it used for the reminder lead choices in
@@ -97,7 +98,7 @@ project rule, prefer `size-8` over `w-8 h-8` for square sizing.
 ## Commands you will need
 
 | Purpose   | Command          | Expected on success |
-|-----------|------------------|---------------------|
+| --------- | ---------------- | ------------------- |
 | Typecheck | `pnpm typecheck` | exit 0, `0 errors`  |
 | Lint      | `pnpm lint`      | exit 0              |
 | Build     | `pnpm build`     | exit 0              |
@@ -108,16 +109,18 @@ project rule, prefer `size-8` over `w-8 h-8` for square sizing.
 ## Scope
 
 **In scope** (modify):
+
 - `src/components/schedule/ScheduleApp.tsx`
 - `src/components/schedule/ScheduleList.tsx`
 - `src/components/schedule/ScheduleGrid.tsx`
 
 **Out of scope** (do NOT touch):
+
 - `src/lib/stores.ts` — the filter state is **ephemeral** (component state),
   intentionally not persisted. Do not add a nanostore for it.
 - `src/content/**` — the `language` tags already exist; do not edit content.
 - The favorites/`favoritesOnly` behavior — leave it working exactly as is; the
-  new filter is *additive* and composes with it (a session shows only if it
+  new filter is _additive_ and composes with it (a session shows only if it
   matches the search/language filter AND passes the favorites filter).
 - Server/backend anything.
 
@@ -148,11 +151,14 @@ function matchesFilter(s: SessionLite): boolean {
   if (filtersActive && s.kind === "break") return false
   if (language !== "all" && s.language !== language) return false
   if (q === "") return true
-  const haystack = `${s.title} ${s.speakers.map((sp) => sp.name).join(" ")}`.toLowerCase()
+  const haystack =
+    `${s.title} ${s.speakers.map((sp) => sp.name).join(" ")}`.toLowerCase()
   return haystack.includes(q)
 }
 
-const matchedSlugs = new Set(daySessions.filter(matchesFilter).map((s) => s.slug))
+const matchedSlugs = new Set(
+  daySessions.filter(matchesFilter).map((s) => s.slug)
+)
 ```
 
 Pass `matchedSlugs` and `filtersActive` to both views (added props in Steps 2–3):
@@ -168,6 +174,7 @@ expected; do not consider this step done until after Step 4's typecheck passes.
 ### Step 2: Make the list hide non-matches and gain a "no results" empty state
 
 In `src/components/schedule/ScheduleList.tsx`:
+
 - Extend `ScheduleListProps` with `matchedSlugs: Set<string>` and
   `filtersActive: boolean`.
 - Change the `visible` computation (`:204-206`) to compose favorites + filter:
@@ -197,6 +204,7 @@ In `src/components/schedule/ScheduleList.tsx`:
 ### Step 3: Make the grid dim non-matches
 
 In `src/components/schedule/ScheduleGrid.tsx`:
+
 - Extend `ScheduleGridProps` (`:20-25`) with `matchedSlugs: Set<string>` and
   `filtersActive: boolean`.
 - Update the `dimmed` prop where `SessionBlock` is rendered (`:288`) to also dim
@@ -265,6 +273,7 @@ this component does: filter state is local `useState` initialized to constants
 **Verify (automated)**: `pnpm build` → exit 0.
 
 **Verify (manual)**: `pnpm preview`, then in the browser:
+
 - Type a speaker surname present in the schedule → list shows only their
   session(s); grid dims everything else.
 - Type a word in a talk title → matching session(s) shown/highlighted.
@@ -280,16 +289,16 @@ this component does: filter state is local `useState` initialized to constants
 
 ALL must hold:
 
-- [ ] `pnpm typecheck` exits 0, `0 errors`.
-- [ ] `pnpm lint` exits 0.
-- [ ] `pnpm build` exits 0.
-- [ ] Search matches on both session title and speaker names (verified manually
+- [x] `pnpm typecheck` exits 0, `0 errors`.
+- [x] `pnpm lint` exits 0.
+- [x] `pnpm build` exits 0.
+- [x] Search matches on both session title and speaker names (verified manually
       in Step 5).
-- [ ] Language filter (`All`/`DE`/`EN`) narrows both views and composes with the
+- [x] Language filter (`All`/`DE`/`EN`) narrows both views and composes with the
       favorites toggle.
-- [ ] No nanostore/`localStorage` key added (`git diff 9f0b076 -- src/lib/stores.ts` is empty).
-- [ ] Only the three in-scope files appear in `git status`.
-- [ ] `plans/README.md` status row for 002 updated.
+- [x] No nanostore/`localStorage` key added (`git diff 9f0b076 -- src/lib/stores.ts` is empty).
+- [x] Only the three in-scope files appear in `git status`.
+- [x] `plans/README.md` status row for 002 updated.
 
 ## STOP conditions
 

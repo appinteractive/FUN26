@@ -24,6 +24,8 @@ interface ScheduleGridProps {
   favorites: string[]
   favoritesOnly: boolean
   notedSlugs: string[]
+  matchedSlugs: Set<string>
+  filtersActive: boolean
 }
 
 function SessionBlock({
@@ -149,6 +151,8 @@ export function ScheduleGrid({
   favorites,
   favoritesOnly,
   notedSlugs,
+  matchedSlugs,
+  filtersActive,
 }: ScheduleGridProps) {
   const geometry = computeGeometry(sessions)
   const now = useNow()
@@ -293,7 +297,10 @@ export function ScheduleGrid({
                     height={
                       minutesBetween(session.start, session.end) * PX_PER_MIN
                     }
-                    dimmed={favoritesOnly && !favorites.includes(session.slug)}
+                    dimmed={
+                      (favoritesOnly && !favorites.includes(session.slug)) ||
+                      (filtersActive && !matchedSlugs.has(session.slug))
+                    }
                     state={sessionState(session.start, session.end, now)}
                     now={now}
                     favorited={favorites.includes(session.slug)}
