@@ -11,6 +11,7 @@ const sessions = defineCollection({
     stage: z.string(),
     stageOrder: z.number(),
     kind: z.enum(["talk", "workshop", "break"]),
+    language: z.enum(["de", "en"]).optional(),
     speakers: z
       .array(
         z.object({
@@ -20,7 +21,28 @@ const sessions = defineCollection({
         })
       )
       .default([]),
+    resources: z
+      .array(
+        z.object({
+          label: z.string(),
+          // Absolute URL or site-relative path (e.g. /resources/foo.pdf)
+          url: z.string(),
+          kind: z.enum(["slides", "video", "code", "link"]).default("link"),
+        })
+      )
+      .default([]),
   }),
 })
 
-export const collections = { sessions }
+const speakers = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/speakers" }),
+  schema: z.object({
+    name: z.string(),
+    role: z.string().optional(),
+    image: z.string(),
+    linkedin: z.url().optional(),
+    website: z.url().optional(),
+  }),
+})
+
+export const collections = { sessions, speakers }

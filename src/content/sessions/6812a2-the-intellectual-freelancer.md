@@ -5,6 +5,7 @@ end: 2026-06-12T14:10:00+02:00
 stage: "exali Main Stage"
 stageOrder: 0
 kind: talk
+language: en
 speakers:
   - name: "Zsike Peter"
     role: "Founder of Vampire Digital & Thinkbait"

@@ -5,6 +5,7 @@ end: 2026-06-12T10:40:00+02:00
 stage: "Beyond the hustle"
 stageOrder: 2
 kind: talk
+language: en
 speakers:
   - name: "Ricardo Brito"
     role: "Solopreneur coach and business strategist"

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { NotebookPen } from "lucide-react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ interface ScheduleGridProps {
   stages: string[]
   favorites: string[]
   favoritesOnly: boolean
+  notedSlugs: string[]
 }
 
 function SessionBlock({
@@ -32,6 +34,7 @@ function SessionBlock({
   state,
   now,
   favorited,
+  hasNote,
 }: {
   session: SessionLite
   top: number
@@ -40,6 +43,7 @@ function SessionBlock({
   state: SessionState | null
   now: Date | null
   favorited: boolean
+  hasNote: boolean
 }) {
   const duration = minutesBetween(session.start, session.end)
   const isBreak = session.kind === "break"
@@ -120,6 +124,9 @@ function SessionBlock({
             {duration >= 35 && session.speakers.length > 0 && (
               <span className="line-clamp-1 text-xs text-muted-foreground italic">
                 {speakerNames(session)}
+                {hasNote && (
+                  <NotebookPen className="ml-1 inline size-3 align-[-0.1em]" />
+                )}
               </span>
             )}
           </>
@@ -141,6 +148,7 @@ export function ScheduleGrid({
   stages,
   favorites,
   favoritesOnly,
+  notedSlugs,
 }: ScheduleGridProps) {
   const geometry = computeGeometry(sessions)
   const now = useNow()
@@ -289,6 +297,7 @@ export function ScheduleGrid({
                     state={sessionState(session.start, session.end, now)}
                     now={now}
                     favorited={favorites.includes(session.slug)}
+                    hasNote={notedSlugs.includes(session.slug)}
                   />
                 ))}
             </div>

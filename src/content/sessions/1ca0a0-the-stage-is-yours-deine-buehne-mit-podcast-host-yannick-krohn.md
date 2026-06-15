@@ -5,6 +5,7 @@ end: 2026-06-12T15:30:00+02:00
 stage: "freelancermap Stage"
 stageOrder: 3
 kind: talk
+language: de
 speakers:
   - name: "Yannick Krohn"
     role: "Founder of Goodlance"

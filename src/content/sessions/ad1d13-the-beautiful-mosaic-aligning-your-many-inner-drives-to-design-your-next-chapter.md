@@ -5,10 +5,15 @@ end: 2026-06-12T14:00:00+02:00
 stage: "Beyond the hustle"
 stageOrder: 2
 kind: talk
+language: en
 speakers:
   - name: "Alessandro Pedori"
     role: "AI/NLP Engineer, CTO, Moderator, Mentor, Coach"
     image: "/speakers/alessandro-pedori.jpg"
+resources:
+  - label: "The Beautiful Mosaic – Handout (PDF)"
+    url: "/resources/the-beautiful-mosaic-handout.pdf"
+    kind: slides
 ---
 
 One part of you wants stability. Another wants freedom. A third wants meaning, and a fourth just wants to stop overthinking and ship something. Traditional planning fails because it assumes a single decision-maker sitting at the wheel. There isn’t one, and pretending otherwise is why your last three "five-year plans" quietly died.

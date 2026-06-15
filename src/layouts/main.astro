@@ -5,8 +5,7 @@ import { pwaInfo } from "virtual:pwa-info"
 
 import { ReminderManager } from "@/components/ReminderManager"
 import { ThemeToggle } from "@/components/ThemeToggle"
-import { getSessionsLite } from "@/lib/sessions"
-import { DAY_LABEL } from "@/lib/types"
+import { dayRangeLabel, getSessionsLite } from "@/lib/sessions"
 
 interface Props {
   title?: string
@@ -14,6 +13,7 @@ interface Props {
 
 const { title = "FUN26 – Freelance Unlocked" } = Astro.props
 const sessions = await getSessionsLite()
+const dayLabel = dayRangeLabel(sessions)
 ---
 
 <html lang="en">
@@ -81,10 +81,24 @@ const sessions = await getSessionsLite()
           >
             unofficial
           </span>
+          <nav class="ml-auto flex items-center gap-4">
+            <a
+              href="/speakers"
+              class="text-sm font-medium text-muted-foreground no-underline hover:text-foreground"
+            >
+              Speakers
+            </a>
+            <a
+              href="/notes"
+              class="text-sm font-medium text-muted-foreground no-underline hover:text-foreground"
+            >
+              Notes
+            </a>
+          </nav>
           <span
-            class="ml-auto rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+            class="hidden rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground sm:inline"
           >
-            {DAY_LABEL}
+            {dayLabel}
           </span>
           <ThemeToggle client:load />
         </div>

@@ -1,4 +1,4 @@
-import { Clock, HeartOff, MapPin } from "lucide-react"
+import { Clock, HeartOff, MapPin, NotebookPen } from "lucide-react"
 import { useEffect } from "react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
@@ -27,6 +27,7 @@ interface ScheduleListProps {
   sessions: SessionLite[]
   favorites: string[]
   favoritesOnly: boolean
+  notedSlugs: string[]
 }
 
 /** Restore the page scroll position once, then keep saving it. */
@@ -103,11 +104,13 @@ function SessionCard({
   state,
   now,
   favorited,
+  hasNote,
 }: {
   session: SessionLite
   state: SessionState | null
   now: Date | null
   favorited: boolean
+  hasNote: boolean
 }) {
   const soon = startsInMinutes(session.start, now)
   const live = state === "live"
@@ -170,6 +173,19 @@ function SessionCard({
           {session.kind === "workshop" && (
             <Badge variant="secondary">Workshop</Badge>
           )}
+          {session.language && (
+            <Badge variant="outline" className="uppercase">
+              {session.language}
+            </Badge>
+          )}
+          {hasNote && (
+            <span
+              title="You have notes for this session"
+              className="inline-flex items-center text-muted-foreground"
+            >
+              <NotebookPen className="size-3.5" />
+            </span>
+          )}
         </span>
       </a>
       <FavoriteButton slug={session.slug} className="-mt-1 -mr-1 shrink-0" />
@@ -181,6 +197,7 @@ export function ScheduleList({
   sessions,
   favorites,
   favoritesOnly,
+  notedSlugs,
 }: ScheduleListProps) {
   const now = useNow()
   useListScrollMemory()
@@ -230,6 +247,7 @@ export function ScheduleList({
                   state={state}
                   now={now}
                   favorited={favorites.includes(session.slug)}
+                  hasNote={notedSlugs.includes(session.slug)}
                 />
               )
             })}

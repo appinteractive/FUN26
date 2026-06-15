@@ -3,7 +3,6 @@ import { Bell, CalendarArrowDown } from "lucide-react"
 import { useState } from "react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { ShareSchedule } from "@/components/ShareSchedule"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -68,8 +67,7 @@ export function NotificationSettings({
         <DialogHeader>
           <DialogTitle>My schedule</DialogTitle>
           <DialogDescription>
-            Reminders, calendar export, and device transfer for your favorited
-            sessions.
+            Reminders and calendar export for your favorited sessions.
           </DialogDescription>
         </DialogHeader>
 
@@ -147,11 +145,6 @@ export function NotificationSettings({
           Export {favorites.length || "—"} favorite
           {favorites.length === 1 ? "" : "s"} (.ics)
         </Button>
-
-        <Separator />
-
-        <h3 className="text-sm font-semibold">Transfer to another device</h3>
-        <ShareSchedule favorites={favorites} />
       </DialogContent>
     </Dialog>
   )

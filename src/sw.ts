@@ -11,6 +11,8 @@ cleanupOutdatedCaches()
 // Pages are precached under clean URLs without a trailing slash
 // (e.g. /schedule/foo). Map trailing-slash navigations onto them.
 precacheAndRoute(self.__WB_MANIFEST, {
+  // Share links navigate to "/?fav=…" — serve the precached page anyway.
+  ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^fav$/],
   urlManipulation: ({ url }) => {
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
       const stripped = new URL(url.href)

@@ -29,6 +29,15 @@ export function toggleFavorite(slug: string) {
   )
 }
 
+export function addFavorites(slugs: string[]) {
+  const current = $favorites.get()
+  $favorites.set([...current, ...slugs.filter((s) => !current.includes(s))])
+}
+
+export function replaceFavorites(slugs: string[]) {
+  $favorites.set([...slugs])
+}
+
 export interface ReminderSettings {
   enabled: boolean
   leadMinutes: number
@@ -52,3 +61,25 @@ export const $favoritesOnly = persistentAtom<boolean>(
   false,
   jsonCodec<boolean>(false)
 )
+
+/** Selected schedule day (day key like "2026-06-11"); empty = auto. */
+export const $scheduleDay = persistentAtom<string>("fun26.scheduleDay", "")
+
+/** Personal notes per session, keyed by session slug. Stored only on device. */
+export const $notes = persistentAtom<Record<string, string>>(
+  "fun26.notes",
+  {},
+  jsonCodec<Record<string, string>>({})
+)
+
+export function setNote(slug: string, text: string) {
+  const current = $notes.get()
+  if (text.trim() === "") {
+    if (!(slug in current)) return
+    const next = { ...current }
+    delete next[slug]
+    $notes.set(next)
+  } else {
+    $notes.set({ ...current, [slug]: text })
+  }
+}

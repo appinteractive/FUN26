@@ -5,6 +5,7 @@ end: 2026-06-12T12:00:00+02:00
 stage: "exali Main Stage"
 stageOrder: 0
 kind: talk
+language: de
 speakers:
   - name: "Benno Grunewald"
     role: "Expert on False Self-Employment"

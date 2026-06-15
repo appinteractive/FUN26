@@ -5,6 +5,7 @@ end: 2026-06-12T15:30:00+02:00
 stage: "Grow & Sell"
 stageOrder: 1
 kind: talk
+language: en
 speakers:
   - name: "Julien Look"
     role: "Founder & CTO of Look Beyond"
