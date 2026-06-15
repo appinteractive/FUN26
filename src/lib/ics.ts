@@ -1,3 +1,4 @@
+import { event } from "@/event.config"
 import type { SessionLite } from "./types"
 
 function icsUtc(iso: string): string {
@@ -51,7 +52,7 @@ export function downloadIcs(sessions: SessionLite[]) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
-  a.download = "fun26-favorites.ics"
+  a.download = `${event.shortName.toLowerCase()}-favorites.ics`
   a.click()
   URL.revokeObjectURL(url)
 }

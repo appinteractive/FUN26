@@ -5,13 +5,14 @@ import { pwaInfo } from "virtual:pwa-info"
 
 import { ReminderManager } from "@/components/ReminderManager"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { event } from "@/event.config"
 import { dayRangeLabel, getSessionsLite } from "@/lib/sessions"
 
 interface Props {
   title?: string
 }
 
-const { title = "FUN26 – Freelance Unlocked" } = Astro.props
+const { title = `${event.shortName} – ${event.name}` } = Astro.props
 const sessions = await getSessionsLite()
 const dayLabel = dayRangeLabel(sessions)
 ---
@@ -23,7 +24,7 @@ const dayLabel = dayRangeLabel(sessions)
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#E9664C" />
+    <meta name="theme-color" content={event.themeColor} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>{title}</title>
@@ -54,19 +55,23 @@ const dayLabel = dayRangeLabel(sessions)
         >
           <a href="/" class="flex items-baseline gap-2 no-underline">
             <span class="text-lg font-black tracking-tight text-primary"
-              >FUN26</span
+              >{event.shortName}</span
             >
             <span
               class="hidden text-sm font-medium text-muted-foreground sm:inline"
-              >Freelance Unlocked</span
+              >{event.name}</span
             >
           </a>
-          <span
-            class="rounded-sm bg-muted px-1.5 py-0.5 text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase"
-            title="Community-built app, not affiliated with the organizers"
-          >
-            unofficial
-          </span>
+          {
+            event.unofficial && (
+              <span
+                class="rounded-sm bg-muted px-1.5 py-0.5 text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase"
+                title="Community-built app, not affiliated with the organizers"
+              >
+                unofficial
+              </span>
+            )
+          }
           <nav class="ml-auto flex items-center gap-4">
             <a
               href="/speakers"
@@ -99,14 +104,15 @@ const dayLabel = dayRangeLabel(sessions)
           <span>
             Built by
             <a
-              href="https://www.linkedin.com/in/grzegorz-leoniec"
+              href={event.author.url}
               target="_blank"
               rel="noopener"
               class="font-medium text-foreground underline-offset-2 hover:text-primary hover:underline"
             >
-              Grzegorz Leoniec
+              {event.author.name}
             </a>
-            · unofficial companion app for FUN26
+            · {event.unofficial ? "unofficial companion app" : "companion app"} for
+            {event.shortName}
           </span>
         </div>
       </footer>

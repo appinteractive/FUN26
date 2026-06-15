@@ -9,6 +9,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { event } from "@/event.config"
 import { useMounted } from "@/hooks/use-mounted"
 import { $notes } from "@/lib/stores"
 import { dayKey, fmtDay, fmtTime } from "@/lib/time"
@@ -19,7 +20,7 @@ interface NotesOverviewProps {
 }
 
 function notesMarkdown(noted: { session: SessionLite; note: string }[]) {
-  const parts = ["# My FUN26 notes", ""]
+  const parts = [`# My ${event.shortName} notes`, ""]
   for (const { session, note } of noted) {
     parts.push(
       `## ${session.title}`,
@@ -68,7 +69,7 @@ export function NotesOverview({ sessions }: NotesOverviewProps) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "fun26-notes.md"
+    a.download = `${event.shortName.toLowerCase()}-notes.md`
     a.click()
     URL.revokeObjectURL(url)
   }
