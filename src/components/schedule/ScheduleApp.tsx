@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/react"
 import { useState } from "react"
+import Fuse from "fuse.js"
 import { Heart, LayoutGrid, List, Search } from "lucide-react"
 
 import { NotificationSettings } from "@/components/NotificationSettings"
@@ -63,21 +64,33 @@ export function ScheduleApp({ sessions }: ScheduleAppProps) {
 
   const daySessions = sessions.filter((s) => dayKey(s.start) === day)
   const stages = stagesOf(daySessions)
-  const q = query.trim().toLowerCase()
+  const q = query.trim()
   const filtersActive = q !== "" || language !== "all"
 
-  function matchesFilter(s: SessionLite): boolean {
+  // Fuzzy index over the current day's sessions. Weights title above speaker
+  // names. React Compiler memoizes this across renders.
+  const fuse = new Fuse(daySessions, {
+    keys: [
+      { name: "title", weight: 2 },
+      { name: "speakers.name", weight: 1 },
+    ],
+    threshold: 0.4,
+    ignoreLocation: true,
+  })
+
+  function passesNonQueryFilters(s: SessionLite): boolean {
     if (filtersActive && s.kind === "break") return false
     if (language !== "all" && s.language !== language) return false
-    if (q === "") return true
-    const haystack = `${s.title} ${s.speakers
-      .map((speaker) => speaker.name)
-      .join(" ")}`.toLowerCase()
-    return haystack.includes(q)
+    return true
   }
 
   const matchedSlugs = new Set(
-    daySessions.filter(matchesFilter).map((s) => s.slug)
+    (q === ""
+      ? daySessions
+      : fuse.search(q).map((result) => result.item)
+    )
+      .filter(passesNonQueryFilters)
+      .map((s) => s.slug)
   )
 
   return (
