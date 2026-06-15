@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/react"
-import { Heart, LayoutGrid, List } from "lucide-react"
+import { useState } from "react"
+import { Heart, LayoutGrid, List, Search } from "lucide-react"
 
 import { NotificationSettings } from "@/components/NotificationSettings"
 import { ShareSchedule } from "@/components/ShareSchedule"
@@ -8,7 +9,9 @@ import { useNow } from "@/hooks/use-now"
 import { fmtTime } from "@/lib/time"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
   $favorites,
   $favoritesOnly,
@@ -37,6 +40,8 @@ function stagesOf(sessions: SessionLite[]): string[] {
 export function ScheduleApp({ sessions }: ScheduleAppProps) {
   const mounted = useMounted()
   const now = useNow()
+  const [query, setQuery] = useState("")
+  const [language, setLanguage] = useState<"all" | "de" | "en">("all")
   const storedView = useStore($scheduleView)
   const storedFavoritesOnly = useStore($favoritesOnly)
   const storedFavorites = useStore($favorites)
@@ -58,6 +63,22 @@ export function ScheduleApp({ sessions }: ScheduleAppProps) {
 
   const daySessions = sessions.filter((s) => dayKey(s.start) === day)
   const stages = stagesOf(daySessions)
+  const q = query.trim().toLowerCase()
+  const filtersActive = q !== "" || language !== "all"
+
+  function matchesFilter(s: SessionLite): boolean {
+    if (filtersActive && s.kind === "break") return false
+    if (language !== "all" && s.language !== language) return false
+    if (q === "") return true
+    const haystack = `${s.title} ${s.speakers
+      .map((speaker) => speaker.name)
+      .join(" ")}`.toLowerCase()
+    return haystack.includes(q)
+  }
+
+  const matchedSlugs = new Set(
+    daySessions.filter(matchesFilter).map((s) => s.slug)
+  )
 
   return (
     <div className="flex flex-col">
@@ -115,6 +136,32 @@ export function ScheduleApp({ sessions }: ScheduleAppProps) {
           </div>
         </div>
 
+        <div className="mt-2 flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search talks or speakers..."
+              aria-label="Search sessions"
+              className="pl-8"
+            />
+          </div>
+          <ToggleGroup
+            value={[language]}
+            onValueChange={(value: unknown[]) => {
+              const pick = String(value[0] ?? "all")
+              setLanguage(pick === "de" || pick === "en" ? pick : "all")
+            }}
+            variant="outline"
+          >
+            <ToggleGroupItem value="all">All</ToggleGroupItem>
+            <ToggleGroupItem value="de">DE</ToggleGroupItem>
+            <ToggleGroupItem value="en">EN</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
         {days.length > 1 && (
           <Tabs
             value={day}
@@ -143,6 +190,8 @@ export function ScheduleApp({ sessions }: ScheduleAppProps) {
             favorites={favorites}
             favoritesOnly={favoritesOnly}
             notedSlugs={notedSlugs}
+            matchedSlugs={matchedSlugs}
+            filtersActive={filtersActive}
           />
         </div>
       ) : (
@@ -152,6 +201,8 @@ export function ScheduleApp({ sessions }: ScheduleAppProps) {
             favorites={favorites}
             favoritesOnly={favoritesOnly}
             notedSlugs={notedSlugs}
+            matchedSlugs={matchedSlugs}
+            filtersActive={filtersActive}
           />
         </div>
       )}

@@ -21,8 +21,8 @@ The June 2026 merge already shipped most of what an earlier audit had proposed:
 - **Multi-day schedule** — the day switcher and per-day stages already derive
   from session dates (`src/components/schedule/ScheduleApp.tsx:51-60`). Plan 001
   finishes the template job by extracting the remaining hardcoded event identity.
-- **Language taxonomy** — the `language` field exists and is *displayed*, but
-  never *filtered on*. Plan 002 adds the missing filter/search UI.
+- **Language taxonomy** — the `language` field exists and is _displayed_, but
+  never _filtered on_. Plan 002 adds the missing filter/search UI.
 
 Shared-state features (live Q&A, ratings, favorite counts, cross-device sync)
 are deliberately deferred behind a backend decision —
@@ -37,19 +37,19 @@ test framework.
 
 ## Execution order & status
 
-| Plan | Title | Priority | Effort | Depends on | Status |
-|------|-------|----------|--------|------------|--------|
-| 001  | Extract event identity into a single config (template keystone) | P1 | L | — | DONE |
-| 002  | Search + language/kind filtering for the schedule | P2 | M | soft: 001 | TODO |
-| 003  | "My Day" personal agenda with conflict detection | P2 | M | soft: 001 | TODO |
-| 004  | Content-integrity check (images + speaker-name linkage) | P3 | S–M | — | TODO |
+| Plan | Title                                                           | Priority | Effort | Depends on | Status |
+| ---- | --------------------------------------------------------------- | -------- | ------ | ---------- | ------ |
+| 001  | Extract event identity into a single config (template keystone) | P1       | L      | —          | DONE   |
+| 002  | Search + language/kind filtering for the schedule               | P2       | M      | soft: 001  | DONE   |
+| 003  | "My Day" personal agenda with conflict detection                | P2       | M      | soft: 001  | TODO   |
+| 004  | Content-integrity check (images + speaker-name linkage)         | P3       | S–M    | —          | TODO   |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (one-line reason) |
 REJECTED (one-line rationale).
 
 ## Dependency notes
 
-- No plan *hard*-depends on another. Recommended order is 001 → 002 → 003 → 004.
+- No plan _hard_-depends on another. Recommended order is 001 → 002 → 003 → 004.
 - 001 is **soft-before** 002 and 003: it introduces `src/event.config.ts` and
   changes page-title strings and `src/layouts/main.astro`. 002 and 003 both add
   new pages/UI that should read the new config and (003) add a header nav link

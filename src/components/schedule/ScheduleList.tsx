@@ -1,4 +1,4 @@
-import { Clock, HeartOff, MapPin, NotebookPen } from "lucide-react"
+import { Clock, HeartOff, MapPin, NotebookPen, Search } from "lucide-react"
 import { useEffect } from "react"
 
 import { FavoriteButton } from "@/components/FavoriteButton"
@@ -28,6 +28,8 @@ interface ScheduleListProps {
   favorites: string[]
   favoritesOnly: boolean
   notedSlugs: string[]
+  matchedSlugs: Set<string>
+  filtersActive: boolean
 }
 
 /** Restore the page scroll position once, then keep saving it. */
@@ -198,24 +200,30 @@ export function ScheduleList({
   favorites,
   favoritesOnly,
   notedSlugs,
+  matchedSlugs,
+  filtersActive,
 }: ScheduleListProps) {
   const now = useNow()
   useListScrollMemory()
-  const visible = favoritesOnly
-    ? sessions.filter((s) => favorites.includes(s.slug))
-    : sessions
+  const visible = sessions.filter(
+    (s) =>
+      matchedSlugs.has(s.slug) && (!favoritesOnly || favorites.includes(s.slug))
+  )
 
   if (visible.length === 0) {
+    const title = filtersActive ? "No matching sessions" : "No favorites yet"
+    const description = filtersActive
+      ? "Try a different search term or language."
+      : "Tap the heart on a session to build your personal schedule."
+
     return (
       <Empty className="border border-dashed">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <HeartOff />
+            {filtersActive ? <Search /> : <HeartOff />}
           </EmptyMedia>
-          <EmptyTitle>No favorites yet</EmptyTitle>
-          <EmptyDescription>
-            Tap the heart on a session to build your personal schedule.
-          </EmptyDescription>
+          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyDescription>{description}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     )
