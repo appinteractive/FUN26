@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { event } from "@/event.config"
 import { useMounted } from "@/hooks/use-mounted"
 import { buildShareLink, decodeFavParam, parseShareLink } from "@/lib/share"
 import { addFavorites, replaceFavorites } from "@/lib/stores"
@@ -79,7 +80,10 @@ export function ShareSchedule({
 
   async function shareNative() {
     try {
-      await navigator.share({ title: "My FUN26 schedule", url: shareLink })
+      await navigator.share({
+        title: `My ${event.shortName} schedule`,
+        url: shareLink,
+      })
     } catch {
       // User dismissed the share sheet.
     }
@@ -251,7 +255,8 @@ export function ShareSchedule({
                 </form>
                 {notice?.kind === "invalid" && (
                   <p className="text-xs text-destructive">
-                    That doesn&apos;t look like a FUN26 schedule link.
+                    That doesn&apos;t look like a {event.shortName} schedule
+                    link.
                   </p>
                 )}
                 <FieldDescription>

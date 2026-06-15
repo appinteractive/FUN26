@@ -1,12 +1,13 @@
 ---
 import { NotesOverview } from "@/components/NotesOverview"
+import { event } from "@/event.config"
 import Layout from "@/layouts/main.astro"
 import { getSessionsLite } from "@/lib/sessions"
 
 const sessions = await getSessionsLite()
 ---
 
-<Layout title="My notes – FUN26">
+<Layout title={`My notes – ${event.shortName}`}>
   <div class="mx-auto w-full max-w-2xl px-4 py-6">
     <h1 class="text-2xl leading-tight font-bold">My notes</h1>
     <p class="mt-1 mb-6 text-sm text-muted-foreground">

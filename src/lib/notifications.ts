@@ -1,3 +1,4 @@
+import { event } from "@/event.config"
 import type { SessionLite } from "./types"
 
 export function notificationsSupported(): boolean {
@@ -53,7 +54,7 @@ export function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("de-DE", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Europe/Berlin",
+    timeZone: event.timeZone,
   })
 }
 

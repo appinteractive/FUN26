@@ -14,6 +14,7 @@ import {
 import { FavoriteButton } from "@/components/FavoriteButton"
 import { SessionNotes } from "@/components/SessionNotes"
 import { Badge } from "@/components/ui/badge"
+import { event } from "@/event.config"
 import Layout from "@/layouts/main.astro"
 import { getSpeakersByName } from "@/lib/speakers"
 import { dayKey, fmtDay, fmtTime } from "@/lib/time"
@@ -42,7 +43,7 @@ const resourceIcons = {
 }
 ---
 
-<Layout title={`${title} – FUN26`}>
+<Layout title={`${title} – ${event.shortName}`}>
   <article class="mx-auto w-full max-w-2xl px-4 py-6">
     <a
       href="/"

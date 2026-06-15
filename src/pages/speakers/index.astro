@@ -1,15 +1,16 @@
 ---
 import Layout from "@/layouts/main.astro"
+import { event } from "@/event.config"
 import { getSpeakerEntries } from "@/lib/speakers"
 
 const speakers = await getSpeakerEntries()
 ---
 
-<Layout title="Speakers – FUN26">
+<Layout title={`Speakers – ${event.shortName}`}>
   <div class="mx-auto w-full max-w-7xl px-4 py-6">
     <h1 class="text-2xl leading-tight font-bold">Speakers</h1>
     <p class="mt-1 text-sm text-muted-foreground">
-      Everyone on stage at Freelance Unlocked 2026.
+      Everyone on stage at {event.name}.
     </p>
 
     <ul
