@@ -1,16 +1,18 @@
-const BERLIN = "Europe/Berlin"
+import { event } from "@/event.config"
+
+const TZ = event.timeZone
 
 export function fmtTime(iso: string | Date): string {
   return new Date(iso).toLocaleTimeString("de-DE", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: BERLIN,
+    timeZone: TZ,
   })
 }
 
 /** Calendar day in the event's timezone, e.g. "2026-06-11". */
 export function dayKey(iso: string | Date): string {
-  return new Date(iso).toLocaleDateString("en-CA", { timeZone: BERLIN })
+  return new Date(iso).toLocaleDateString("en-CA", { timeZone: TZ })
 }
 
 /** Short weekday + date label for a day key, e.g. "Thu, June 11". */
@@ -19,7 +21,7 @@ export function fmtDay(key: string): string {
     weekday: "short",
     month: "long",
     day: "numeric",
-    timeZone: BERLIN,
+    timeZone: TZ,
   })
 }
 

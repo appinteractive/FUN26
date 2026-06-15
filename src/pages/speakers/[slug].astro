@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content"
 import { ArrowLeft, Clock, Globe, MapPin } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { event } from "@/event.config"
 import Layout from "@/layouts/main.astro"
 import { getSpeakerEntries, sessionsOfSpeaker } from "@/lib/speakers"
 import { fmtTime } from "@/lib/time"
@@ -25,7 +26,7 @@ const allSessions = await getCollection("sessions")
 const sessions = sessionsOfSpeaker(name, allSessions)
 ---
 
-<Layout title={`${name} – FUN26`}>
+<Layout title={`${name} – ${event.shortName}`}>
   <article class="mx-auto w-full max-w-2xl px-4 py-6">
     <a
       href="/speakers"
@@ -94,7 +95,8 @@ const sessions = sessionsOfSpeaker(name, allSessions)
       sessions.length > 0 && (
         <section class="mt-8">
           <h2 class="text-sm font-semibold">
-            {sessions.length === 1 ? "Session" : "Sessions"} at FUN26
+            {sessions.length === 1 ? "Session" : "Sessions"} at{" "}
+            {event.shortName}
           </h2>
           <ul class="mt-2 flex flex-col gap-2">
             {sessions.map((session) => (
